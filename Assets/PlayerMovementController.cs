@@ -8,15 +8,16 @@ public class PlayerMovementController : MonoBehaviour
     private float speed = 3f;
     [SerializeField]
     private LayerMask groundCollisionLayerMask;
-    [SerializeField]
     private Rigidbody rb;
     private Vector3 input;
     private bool isJumping;
     private float score = 0;
+    [SerializeField]
     public Texture melon;
     private float distanceToGround;
     [SerializeField]
-    private Transform GrabPoint;
+    private Transform grabPoint;
+    private Grabbable selectedGrabbable;
 
     private void OnDrawGizmos(){
         Color raycastColor;
@@ -37,11 +38,11 @@ public class PlayerMovementController : MonoBehaviour
 
     private bool isGrounded(){
         Vector3 startPosition = transform.position + (distanceToGround -0.05f)* Vector3.down;
-        return Physics.Raycast(startPosition, Vector3.down, 03f, groundCollisionLayerMask);
+        return Physics.Raycast(startPosition, Vector3.down, 0.3f, groundCollisionLayerMask);
     }
 
     private void OnTriggerEnter(Collider other){
-        if ( other.gameObject.CompareTag("Collectable")){
+        if (other.gameObject.CompareTag("Collectable")){
             Destroy(other.gameObject);
             score += 1;
         }
@@ -70,7 +71,9 @@ public class PlayerMovementController : MonoBehaviour
             transform.forward = input;
         }
 
-        if (RotaryHeart.Lib.PhysicsExtention.Physics.SphereCast(transform.position, 1f, transform.forward, out RaycastHit hitInfo, maxDistance: 1f, preview: RotaryHeart.Lib.PhysicsExtension.PreviewCondition.Editor) && hitInfo.Transform.TryGetComponent(out Grabbable grabbable) && Input GetKey(KeyCode.Z)){
+        if (RotaryHeart.Lib.PhysicsExtension.Physics.SphereCast(transform.position, 1f, transform.forward,
+            out RaycastHit hitInfo, maxDistance: 1f, preview: RotaryHeart.Lib.PhysicsExtension.PreviewCondition.Editor) 
+            && hitInfo.transform.TryGetComponent(out Grabbable grabbable) && Input.GetKey(KeyCode.Z)){
             selectedGrabbable = grabbable;
             grabbable.Grab(grabPoint);
         }
