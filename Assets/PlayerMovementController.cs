@@ -8,15 +8,18 @@ public class PlayerMovementController : MonoBehaviour
     private float speed = 3f;
     [SerializeField]
     private LayerMask groundCollisionLayerMask;
+    [SerializeField]
+    public Texture melon;
+    [SerializeField]
+    private Transform grabPoint;
+    [SerializeField]
+    private GameObject grabbableBox;
+
     private Rigidbody rb;
     private Vector3 input;
     private bool isJumping;
     private float score = 0;
-    [SerializeField]
-    public Texture melon;
     private float distanceToGround;
-    [SerializeField]
-    private Transform grabPoint;
     private Grabbable selectedGrabbable;
 
     private void OnDrawGizmos(){
@@ -80,6 +83,13 @@ public class PlayerMovementController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.C) && selectedGrabbable){
             selectedGrabbable.Drop();
             selectedGrabbable = null;
+        }
+
+        if(Input.GetKeyDown(KeyCode.B)){
+            GameObject builtBox = Instantiate(grabbableBox, transform.position +(1*transform.forward), Quaternion.identity);
+            if(builtBox.TryGetComponent(out Rigidbody rb)){
+                rb.AddForce(transform.forward * 10f, ForceMode.Impulse);
+            }
         }
     }
 }
